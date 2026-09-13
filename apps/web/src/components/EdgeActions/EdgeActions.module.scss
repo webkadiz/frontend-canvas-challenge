@@ -1,0 +1,22 @@
+.panel {
+  margin: 16px;
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: #a43d50;
+  box-shadow: 0 4px 16px #30295112;
+
+  &:hover:not(:disabled) {
+    background: #fff1f3;
+  }
+}
+
+@media (width <= 900px) {
+  .panel {
+    margin: 8px;
+  }
+}

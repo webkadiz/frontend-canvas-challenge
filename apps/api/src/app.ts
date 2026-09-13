@@ -14,7 +14,9 @@ declare module 'fastify' {
     rawJson: string;
   }
 }
+
 type Request = FastifyRequest<{ Params: Record<string, string>; Body: unknown }>;
+
 type Options = {
   dataFile?: string;
   generationDelayMs?: number;
@@ -22,6 +24,7 @@ type Options = {
   logger?: boolean;
   corsOrigins?: string[];
 };
+
 type Route = {
   current?: (request: Request) => boolean;
   id: string;
@@ -36,9 +39,13 @@ type Route = {
   description?: string;
   graph?: boolean;
 };
+
 const idParams = C.object({ spaceId: C.Id });
+
 const jobParams = C.object({ spaceId: C.Id, generationId: C.Id });
+
 const headers = { 'X-Request-Id': Type.String(), 'Cache-Control': Type.String() };
+
 const demoSvg =
   '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600"><defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#b6cce7"/><stop offset="1" stop-color="#f3dfc1"/></linearGradient></defs><rect width="800" height="600" fill="url(#sky)"/><circle cx="590" cy="165" r="64" fill="#fff3c4"/><path d="M0 480L260 160 550 600H0" fill="#526f69"/><path d="M210 600L555 260 800 520V600" fill="#73968b"/><path d="M0 525Q260 475 800 550V600H0" fill="#c4d2c2"/></svg>';
 
@@ -50,25 +57,31 @@ export async function buildApp(options: Options = {}) {
     ajv: { customOptions: { removeAdditional: false, coerceTypes: false, useDefaults: false } },
   });
   const store = new Store(options.dataFile, options.generationDelayMs ?? 1500, options.now);
+
   app.decorateRequest('rawJson', '');
   // Preserve the graph representation byte for byte so PUT can return its strong ETag.
   app.removeContentTypeParser('application/json');
   app.addContentTypeParser('application/json', { parseAs: 'buffer' }, (request, body, done) => {
     if (!isUtf8(body as Buffer))
       return done(new DomainError(400, 'INVALID_UTF8', 'JSON должен быть в UTF-8.'));
+
     request.rawJson = (body as Buffer).toString('utf8');
+
     try {
       done(null, JSON.parse(request.rawJson));
     } catch {
       done(new DomainError(400, 'INVALID_JSON', 'Некорректный JSON.'));
     }
   });
+
   const allow = (url: string) => {
     const path = url.split('?')[0];
     const supported: HTTPMethods[] = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'TRACE'];
     const found = supported.filter((method) => app.findRoute({ method, url: path }));
+
     return found.length ? [...found, 'OPTIONS'].sort() : undefined;
   };
+
   app.addHook('onRequest', async (request, reply) => {
     reply.header('X-Request-Id', request.id).header('Cache-Control', 'no-store');
   });
@@ -89,35 +102,47 @@ export async function buildApp(options: Options = {}) {
   });
   app.addHook('onRequest', async (request, reply) => {
     const methods = allow(request.url);
+
     if (request.method === 'OPTIONS') {
       if (request.url === '*')
         return reply.header('Allow', 'GET, HEAD, POST, PUT, OPTIONS').code(204).send();
+
       if (!methods) throw new DomainError(404, 'ROUTE_NOT_FOUND', 'Маршрут не найден.');
+
       reply.header('Allow', methods.join(', '));
+
       if (request.headers.origin) reply.header('Access-Control-Allow-Methods', methods.join(', '));
+
       return reply.code(204).send();
     }
+
     if (methods && !methods.includes(request.method)) {
       reply.header('Allow', methods.join(', '));
+
       throw new DomainError(405, 'METHOD_NOT_ALLOWED', 'Метод не поддерживается для этого адреса.');
     }
+
     const hasBody =
       Number(request.headers['content-length'] ?? 0) > 0 ||
       request.headers['transfer-encoding'] !== undefined;
+
     if (['GET', 'HEAD'].includes(request.method) && hasBody)
       throw new DomainError(400, 'REQUEST_BODY_NOT_ALLOWED', 'Этот запрос не принимает тело.');
+
     if (
       hasBody &&
       request.headers['content-encoding'] !== undefined &&
       request.headers['content-encoding'].trim().toLowerCase() !== 'identity'
     ) {
       reply.header('Accept-Encoding', 'identity');
+
       throw new DomainError(
         415,
         'UNSUPPORTED_CONTENT_ENCODING',
         'Сжатое тело запроса не поддерживается.',
       );
     }
+
     if (
       ['POST', 'PUT'].includes(request.method) &&
       hasBody &&
@@ -131,6 +156,7 @@ export async function buildApp(options: Options = {}) {
       request.url.split('?')[0] === '/assets/demo.svg'
     )
       return conditionalRead(request, reply, payload);
+
     return payload;
   });
   app.addSchema({ $id: 'ErrorResponse', ...C.ErrorResponse });
@@ -148,8 +174,10 @@ export async function buildApp(options: Options = {}) {
     },
     transformObject(document) {
       if (!('openapiObject' in document)) return document.swaggerObject;
+
       const doc = document.openapiObject;
       const asset = doc.paths?.['/assets/demo.svg']?.get;
+
       if (asset) {
         asset.responses['304'] = {
           description: 'Без тела.',
@@ -158,6 +186,7 @@ export async function buildApp(options: Options = {}) {
             'X-Request-Id': { schema: { type: 'string' } },
           },
         };
+
         for (const [status, description] of Object.entries({
           400: 'Некорректный запрос.',
           412: 'PRECONDITION_FAILED.',
@@ -169,9 +198,12 @@ export async function buildApp(options: Options = {}) {
           };
         }
       }
+
       for (const path of Object.values(doc.paths ?? {})) {
         if (!path) continue;
+
         const base = path.get ?? path.post ?? path.put;
+
         if (path.get)
           path.head = {
             ...path.get,
@@ -180,11 +212,14 @@ export async function buildApp(options: Options = {}) {
             responses: Object.fromEntries(
               Object.entries(path.get.responses).map(([status, response]) => {
                 const value = { ...response };
+
                 if ('content' in value) delete value.content;
+
                 return [status, value];
               }),
             ),
           };
+
         path.options = {
           operationId: `options_${base?.operationId}`,
           tags: ['HTTP'],
@@ -201,6 +236,7 @@ export async function buildApp(options: Options = {}) {
           },
         };
       }
+
       return doc;
     },
   });
@@ -231,7 +267,9 @@ export async function buildApp(options: Options = {}) {
               : status === 400
                 ? 'INVALID_REQUEST'
                 : 'INTERNAL_ERROR';
+
     if (status === 500) request.log.error({ err: error }, 'Request failed');
+
     reply.removeHeader('ETag').removeHeader('Location').removeHeader('Retry-After');
     reply
       .header('Cache-Control', 'no-store')
@@ -262,6 +300,7 @@ export async function buildApp(options: Options = {}) {
     handler: (request: Request, reply: FastifyReply) => unknown,
   ) {
     const responses: Record<string, unknown> = {};
+
     for (const status of route.statuses ?? [200])
       responses[status] = {
         ...route.data,
@@ -278,12 +317,14 @@ export async function buildApp(options: Options = {}) {
           ...(status === 202 ? { 'Retry-After': Type.String() } : {}),
         },
       };
+
     if (method === 'GET')
       responses[304] = {
         type: 'null',
         description: 'Условие If-None-Match совпало; без тела.',
         headers: { ...headers, ...(route.graph ? { ETag: Type.String() } : {}) },
       };
+
     const errors = {
       400: 'Некорректные поля, JSON или заголовки.',
       412: 'PRECONDITION_FAILED: условие запроса не выполнено.',
@@ -296,6 +337,7 @@ export async function buildApp(options: Options = {}) {
         : {}),
       ...route.errors,
     };
+
     for (const [status, description] of Object.entries(errors))
       responses[status] = {
         $ref: 'ErrorResponse#',
@@ -311,6 +353,7 @@ export async function buildApp(options: Options = {}) {
             : {}),
         },
       };
+
     app.route({
       method,
       url,
@@ -400,6 +443,7 @@ export async function buildApp(options: Options = {}) {
     },
     (r, p) => {
       const space = store.createSpace((r.body as { title: string }).title);
+
       return p.header('Location', space.links.self.href).code(201).send(space);
     },
   );
@@ -415,6 +459,20 @@ export async function buildApp(options: Options = {}) {
       errors: { 404: 'SPACE_NOT_FOUND.' },
     },
     async (r) => store.space(r.params.spaceId),
+  );
+  add(
+    'PUT',
+    '/api/spaces/:spaceId',
+    {
+      id: 'renameSpace',
+      summary: 'Переименовать рабочее пространство',
+      tag: 'Spaces',
+      params: idParams,
+      body: C.SpaceInput,
+      data: C.Space,
+      errors: { 404: 'SPACE_NOT_FOUND.' },
+    },
+    async (r) => store.renameSpace(r.params.spaceId, (r.body as { title: string }).title),
   );
   add(
     'GET',
@@ -436,12 +494,15 @@ export async function buildApp(options: Options = {}) {
     },
     (r, p) => {
       const graph = store.graph(r.params.spaceId);
+
       p.header('ETag', graph.etag).header('Cache-Control', 'private, no-cache');
+
       if (
         r.headers['if-match'] !== undefined &&
         !matchesETag(r.headers['if-match'] as string, graph.etag)
       )
         throw new DomainError(412, 'GRAPH_VERSION_CONFLICT', 'Граф изменился.');
+
       return p.type('application/json; charset=utf-8').send(graph.raw);
     },
   );
@@ -469,18 +530,23 @@ export async function buildApp(options: Options = {}) {
     (r, p) => {
       if (r.headers['if-none-match'] !== undefined) {
         const graph = store.graph(r.params.spaceId);
+
         if (r.headers['if-match'] === undefined)
           throw new DomainError(428, 'PRECONDITION_REQUIRED', 'Передайте If-Match.');
+
         if (!matchesETag(r.headers['if-match'] as string, graph.etag))
           throw new DomainError(412, 'GRAPH_VERSION_CONFLICT', 'Граф изменился.');
+
         if (matchesETag(r.headers['if-none-match'] as string, graph.etag, true))
           throw new DomainError(412, 'GRAPH_VERSION_CONFLICT', 'Условие сохранения не выполнено.');
       }
+
       const graph = store.saveGraph(
         r.params.spaceId,
         r.rawJson,
         r.headers['if-match'] as string | undefined,
       );
+
       return p.header('ETag', graph.etag).type('application/json; charset=utf-8').send(graph.raw);
     },
   );
@@ -525,8 +591,11 @@ export async function buildApp(options: Options = {}) {
         r.headers['idempotency-key'] as string,
       );
       const status = value.data.status === 'processing' ? 202 : value.created ? 201 : 200;
+
       if (status !== 200) p.header('Location', value.data.links.self.href);
+
       if (status === 202) p.header('Retry-After', '1');
+
       return p.code(status).send(value.data);
     },
   );
@@ -562,5 +631,6 @@ export async function buildApp(options: Options = {}) {
       p.header('Cache-Control', 'public, max-age=3600').type('image/svg+xml').send(demoSvg),
   );
   await app.ready();
+
   return app;
 }

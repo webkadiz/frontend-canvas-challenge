@@ -1,0 +1,18 @@
+export const spaceDialogText = {
+  renameTrigger: 'Переименовать пространство',
+  createTrigger: 'Новое пространство',
+  saveFailed: 'Не удалось сохранить название. Попробуйте ещё раз.',
+  icon: '▦',
+  close: 'Закрыть',
+  createTitle: 'Новое пространство',
+  renameDescription: 'Изменится только название. Все блоки и связи останутся на месте.',
+  createDescription: 'Место для новой идеи, текстов и генераций.',
+  name: 'Название',
+  placeholder: 'Например, Идеи для обложки',
+  limit: 'До 80 символов',
+  cancel: 'Отмена',
+  saving: 'Сохраняем…',
+  creating: 'Создаём…',
+  save: 'Сохранить',
+  create: 'Создать пространство',
+} as const;

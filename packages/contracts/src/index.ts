@@ -2,12 +2,16 @@ import { Type, type Static, type TSchema } from '@sinclair/typebox';
 
 export const object = <T extends Record<string, TSchema>>(properties: T) =>
   Type.Object(properties, { additionalProperties: false });
+
 export const Id = Type.String({ format: 'uuid' });
+
 const Label = Type.String({ minLength: 1, maxLength: 80, pattern: '\\S' });
+
 const Position = object({
   x: Type.Number({ minimum: -10000, maximum: 10000 }),
   y: Type.Number({ minimum: -10000, maximum: 10000 }),
 });
+
 export const Node = Type.Union([
   object({
     id: Id,
@@ -28,7 +32,9 @@ export const Node = Type.Union([
     data: object({ label: Label }),
   }),
 ]);
+
 export const Edge = object({ id: Id, source: Id, target: Id });
+
 export const Graph = object({
   nodes: Type.Array(Node, { maxItems: 20 }),
   edges: Type.Array(Edge, { maxItems: 20 }),
@@ -38,6 +44,7 @@ export const Graph = object({
     zoom: Type.Number({ minimum: 0.1, maximum: 4 }),
   }),
 });
+
 export const Links = Type.Record(
   Type.String(),
   object({
@@ -45,18 +52,22 @@ export const Links = Type.Record(
     method: Type.Union([Type.Literal('GET'), Type.Literal('POST'), Type.Literal('PUT')]),
   }),
 );
+
 export const SpaceInput = object({ title: Label });
+
 export const Space = object({
   id: Id,
   title: Label,
   createdAt: Type.String({ format: 'date-time' }),
   links: Links,
 });
+
 export const GenerationInput = object({
   nodeId: Id,
   graphETag: Type.String({ pattern: '^"[a-f0-9]{64}"$' }),
   scenario: Type.Union([Type.Literal('success'), Type.Literal('failure')]),
 });
+
 export const Generation = object({
   id: Id,
   spaceId: Id,
@@ -75,9 +86,11 @@ export const Generation = object({
   failureCode: Type.Unsafe<string | null>({ type: 'string', nullable: true }),
   links: Links,
 });
+
 export const ErrorResponse = object({
   error: object({ code: Type.String(), message: Type.String() }),
 });
+
 export const IdempotencyHeaders = Type.Object({
   'idempotency-key': Type.String({
     minLength: 8,
@@ -86,6 +99,7 @@ export const IdempotencyHeaders = Type.Object({
     description: 'Сохраняйте ключ при повторе запроса; для новой генерации нужен новый ключ.',
   }),
 });
+
 export const GraphHeaders = Type.Object({
   'if-match': Type.Optional(
     Type.String({
@@ -93,6 +107,7 @@ export const GraphHeaders = Type.Object({
     }),
   ),
 });
+
 export const Config = object({
   debounceMs: Type.Integer(),
   pollIntervalMs: Type.Integer(),
@@ -104,7 +119,11 @@ export const Config = object({
 });
 
 export type GraphData = Static<typeof Graph>;
+
 export type NodeData = Static<typeof Node>;
+
 export type GenerationData = Static<typeof Generation>;
+
 export type GenerationRequest = Static<typeof GenerationInput>;
+
 export type SpaceData = Static<typeof Space>;

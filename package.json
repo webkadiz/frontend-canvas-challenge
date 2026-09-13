@@ -12,10 +12,14 @@
     "npm": ">=11 <12"
   },
   "scripts": {
-    "dev": "npm run build -w @canvas/contracts && npm run dev -w @canvas/api",
-    "build": "npm run build -w @canvas/contracts && npm run build -w @canvas/api",
+    "dev": "npm run build -w @canvas/contracts && node scripts/dev.mjs",
+    "dev:api": "npm run build -w @canvas/contracts && npm run dev -w @canvas/api",
+    "dev:web": "npm run dev -w @canvas/web",
+    "build": "npm run build -w @canvas/contracts && npm run build -w @canvas/api && npm run build -w @canvas/web",
     "start": "npm run start -w @canvas/api",
-    "test": "npm run build && npm run test -w @canvas/api",
+    "test": "npm run build && npm run test -w @canvas/api && npm run test -w @canvas/web",
+    "test:web": "npm run test -w @canvas/web",
+    "test:e2e": "playwright test",
     "docs:generate": "npm run build && node scripts/openapi.mjs --write",
     "docs:check": "node scripts/openapi.mjs",
     "check": "npm run format:check && npm test && npm run docs:check",
@@ -26,6 +30,7 @@
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "13.0.0",
+    "@playwright/test": "1.63.0",
     "@types/node": "24.13.3",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",

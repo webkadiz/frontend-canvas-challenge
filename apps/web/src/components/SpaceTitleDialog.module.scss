@@ -1,0 +1,187 @@
+.newSpace {
+  border-bottom: 1px solid #ececf2;
+  margin: 18px 10px 0;
+  padding-bottom: 25px;
+
+  & button {
+    font-size: 13px;
+    padding: 7px 10px;
+  }
+}
+
+.spaceDialog {
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  padding: 30px;
+  border: 1px solid #e5e3ef;
+  border-radius: 18px;
+  background: #fff;
+  color: #313543;
+  box-shadow: 0 24px 80px #25213630;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+
+  &::backdrop {
+    background: #24233366;
+    backdrop-filter: blur(3px);
+    opacity: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  &.isClosing {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    pointer-events: none;
+  }
+
+  &.isClosing::backdrop {
+    opacity: 0;
+  }
+}
+
+@starting-style {
+  .spaceDialog[open] {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+
+    &::backdrop {
+      opacity: 0;
+    }
+  }
+}
+
+.spaceDialogHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.spaceDialogSymbol {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
+  background: #f0edfa;
+  color: #7771c7;
+  font-size: 28px;
+}
+
+.spaceDialogClose {
+  width: 32px;
+  height: 32px;
+  font-size: 25px;
+  line-height: 1;
+  color: #8c909e;
+
+  &:hover:not(:disabled) {
+    background: #f1eff9;
+    color: #6c62a7;
+  }
+}
+
+.spaceDialog h2 {
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  margin-bottom: 9px;
+}
+
+.spaceDialog p {
+  font-size: 14px;
+}
+
+.spaceDialogField {
+  gap: 8px;
+  margin: 26px 0 0;
+
+  & > span {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  & input {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #dedee9;
+    background: #fbfbfd;
+    font-size: 16px;
+  }
+}
+
+.spaceDialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 28px;
+
+  & button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
+.spaceDialogSpinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff5;
+  border-top-color: currentcolor;
+  border-radius: 50%;
+  animation: space-dialog-spin 0.8s linear infinite;
+}
+
+@keyframes space-dialog-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (width <= 480px) {
+  .spaceDialog {
+    padding: 24px;
+  }
+
+  .spaceDialogActions {
+    flex-direction: column-reverse;
+  }
+}
+
+.renameSpace {
+  flex-shrink: 0;
+}
+
+.renameSpaceButton {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  color: #9693ae;
+  transition:
+    color 0.18s,
+    background 0.18s;
+
+  &:hover:not(:disabled) {
+    color: #6c62a7;
+    background: #f1eff9;
+  }
+}
+
+@media (width <= 900px) {
+  .spaceDialogClose,
+  .renameSpaceButton {
+    width: 44px;
+    height: 44px;
+  }
+
+  .newSpace button {
+    min-height: 44px;
+    font-size: 14px;
+  }
+}

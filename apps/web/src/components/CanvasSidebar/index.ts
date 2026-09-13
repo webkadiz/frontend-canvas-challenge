@@ -1,0 +1,1 @@
+export { CanvasSidebar } from './CanvasSidebar';

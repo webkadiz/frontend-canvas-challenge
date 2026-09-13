@@ -3,3 +3,5 @@ node_modules/
 .data/
 package-lock.json
 docs/openapi.json
+test-results/
+playwright-report/

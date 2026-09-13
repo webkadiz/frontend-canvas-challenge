@@ -1,0 +1,126 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #313543;
+  background: #f7f8fb;
+  font-size: 15px;
+  font-synthesis: none;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+button svg {
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  color: inherit;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #8f8bdf;
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+p {
+  color: #8c909e;
+}
+
+button,
+input,
+select,
+textarea {
+  border-radius: 5px;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+}
+
+.react-flow__handle {
+  width: 9px;
+  height: 9px;
+  background: #c9c5dd;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #dedbe9;
+}
+
+.react-flow__handle-connecting {
+  background: #8e7ec5;
+}
+
+.react-flow__minimap {
+  box-sizing: content-box;
+  border: 1px solid #e7e9ef;
+  border-radius: 5px;
+  overflow: hidden;
+  bottom: 20px;
+}
+
+.react-flow__attribution {
+  font-size: 9px;
+  background: transparent;
+  color: #afb4c3;
+
+  & a {
+    color: inherit;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (width <= 900px) {
+  input:not([type='checkbox'], [type='radio']),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  .react-flow__handle {
+    width: 18px;
+    height: 18px;
+  }
+}

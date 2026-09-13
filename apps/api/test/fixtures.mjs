@@ -11,6 +11,7 @@ export function sampleGraph(text = 'Горы на рассвете') {
     },
     { id: randomUUID(), type: 'result', position: { x: 640, y: 0 }, data: { label: 'Результат' } },
   ];
+
   return {
     nodes,
     edges: [

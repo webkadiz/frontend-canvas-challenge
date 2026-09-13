@@ -1,0 +1,72 @@
+.zoomControls {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 5px;
+  margin: 16px;
+  background: #fff;
+  border: 1px solid #deddeb;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px #30295112;
+
+  & button {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    color: #675c9f;
+    font-size: 25px;
+    border-radius: 6px;
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+
+  & button:hover:not(:disabled) {
+    background: #eeeaf8;
+    color: #493a84;
+  }
+
+  & button:active:not(:disabled) {
+    background: #e1daf1;
+  }
+
+  & .zoomPercent {
+    width: 58px;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.zoomDivider {
+  width: 1px;
+  height: 20px;
+  margin: 0 3px;
+  background: #e6e3ed;
+}
+
+@media (width <= 900px) {
+  .zoomControls {
+    width: calc(100% - 16px);
+    max-width: 390px;
+    margin: 0 0 12px;
+    padding: 4px;
+    gap: 0;
+    justify-content: space-between;
+
+    & button {
+      width: 44px;
+      height: 44px;
+    }
+
+    & .zoomPercent {
+      width: 48px;
+    }
+  }
+
+  .zoomDivider {
+    margin: 0 2px;
+  }
+}

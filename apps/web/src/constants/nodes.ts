@@ -1,0 +1,71 @@
+import { Image, Clock, CircleAlert } from 'lucide-react';
+export const canvasViewText = {
+  editor: 'Редактор графа',
+  prompt: 'Текст',
+  generator: 'Генератор',
+  result: 'Результат',
+  deleteEdge: 'Удалить связь',
+  deleteEdges: 'Удалить связи',
+  edgeActions: 'Действия со связями',
+} as const;
+
+export const nodeText = {
+  deleteLabel: (title: string, id: string) => `Удалить ${title} ${id.slice(0, 4)}`,
+  prompt: 'Текст',
+  promptLabel: 'Опишите изображение',
+  promptPlaceholder: 'Что вы хотите увидеть?',
+  textLimit: ' / 2000',
+  promptOutputLabel: 'Описание →',
+  promptOutput: 'Выход текста',
+  generator: 'Генератор',
+  generatorInput: 'Вход генератора',
+  demoTitle: 'Демо-генерация',
+  demoDescription: 'Изображение по вашему тексту',
+  simulateFailure: 'Проверить отказ генерации',
+  uncertainHint: 'Ответ потерян. Повторим тот же запрос без новой генерации.',
+  failureHint: 'Тестовый отказ. Снимите флажок и повторите.',
+  processingHint: 'Ожидаем изображение от сервера.',
+  incompleteHint: 'Нужны текст и связанный результат.',
+  readyHint: 'Локальное изображение · без списаний',
+  resume: 'Продолжить проверку',
+  generatorOutput: 'Выход генератора',
+  result: 'Результат',
+  resultInput: 'Вход результата',
+  processingTitle: 'Создаём изображение',
+  failedTitle: 'Не удалось создать',
+  emptyTitle: 'Здесь будет изображение',
+  retryHint: 'Повторите запуск в генераторе',
+  emptyHint: 'Соедините ноды и запустите генератор',
+  succeeded: 'Готово',
+  processing: 'В процессе',
+  failed: 'Тестовый отказ',
+  idle: 'Ожидает генерации',
+  demo: 'DEMO',
+} as const;
+
+export const RESULT_PRESENTATION = {
+  idle: {
+    icon: Image,
+    title: nodeText.emptyTitle,
+    hint: nodeText.emptyHint,
+    status: nodeText.idle,
+  },
+  processing: {
+    icon: Clock,
+    title: nodeText.processingTitle,
+    hint: nodeText.emptyHint,
+    status: nodeText.processing,
+  },
+  failed: {
+    icon: CircleAlert,
+    title: nodeText.failedTitle,
+    hint: nodeText.retryHint,
+    status: nodeText.failed,
+  },
+  succeeded: {
+    icon: Image,
+    title: nodeText.emptyTitle,
+    hint: nodeText.emptyHint,
+    status: nodeText.succeeded,
+  },
+} as const;

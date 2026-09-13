@@ -1,0 +1,33 @@
+.field {
+  display: grid;
+  gap: 5px;
+  margin: 10px 0;
+
+  & :where(input, select) {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    font-size: 12px;
+    padding: 6px;
+    border: 1px solid #dddfee;
+    background: #fff;
+  }
+}
+
+.hint {
+  font-size: 12px;
+  color: #999baa;
+}
+
+.error {
+  color: #ac5259;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+@media (width <= 900px) {
+  .field :where(input, select) {
+    min-height: 44px;
+    font-size: 16px;
+  }
+}

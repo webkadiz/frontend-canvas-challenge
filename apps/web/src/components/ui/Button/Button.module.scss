@@ -1,0 +1,42 @@
+.secondary {
+  border: 1px solid #e1e2eb;
+  padding: 9px 16px;
+  font-size: 13px;
+  background: #fff;
+
+  &:hover:not(:disabled) {
+    background: #f4f3fa;
+  }
+}
+
+.primary {
+  background: #7870bd;
+  color: white;
+  padding: 12px 20px;
+  font-size: 14px;
+  border: 1px solid #7870bd;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) {
+    background: #645aa9;
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.text {
+  font-size: 13px;
+  color: #756aae;
+  text-decoration: underline;
+  padding: 7px 0;
+}
+
+@media (width <= 900px) {
+  .primary,
+  .secondary,
+  .text {
+    min-height: 44px;
+  }
+}
